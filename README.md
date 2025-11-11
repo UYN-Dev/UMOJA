@@ -1,38 +1,59 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
+# UMOJA - Unity. Culture. Legacy.
 
-First, run the development server:
+## Prerequisites
+- Node.js 18+ installed
+- npm or yarn package manager
+- Access to shared API keys (ask team lead)
 
+## Setup Instructions
+
+### 1. Clone the repository
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <your-repo-url>
+cd UMOJA_FINAL
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Install dependencies
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Set up environment variables
+1. Copy the `.env.example` file to `.env.local`:
+   ```bash
+   cp .env.example .env.local
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. Fill in your `.env.local` file with the actual API keys (get these from your team lead or shared password manager):
+   - Clerk keys (authentication)
+   - Supabase keys (database)
+   - OpenAI key (assessment analysis)
 
-## Learn More
+### 4. Set up the database
+1. Go to your Supabase project dashboard
+2. Navigate to the SQL Editor
+3. Run the following SQL files in order:
+   - `database_setup.sql` - Creates the database schema
+   - `populate_assessments.sql` - Populates assessment data (if needed)
 
-To learn more about Next.js, take a look at the following resources:
+### 5. Run the development server
+```bash
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 6. Open the app
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Available Scripts
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm start` - Start production server
+- `npm run lint` - Run ESLint
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# Umoja
-# UMOJA_FINAL
+## Troubleshooting
+- **Missing environment variables**: Make sure all keys in `.env.local` are filled in
+- **Database connection errors**: Verify Supabase keys are correct and database is set up
+- **Authentication errors**: Check Clerk keys are correct
