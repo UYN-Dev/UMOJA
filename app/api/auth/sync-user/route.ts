@@ -57,18 +57,25 @@ export async function POST(request: Request) {
 
       userData = newUser;
     } else if (existingUser) {
-      // User exists, update role if different
-      if (existingUser.role !== userType) {
+      // User exists: update role and email if needed
+      const nextEmail = user.emailAddresses[0]?.emailAddress || '';
+      const needsRoleUpdate = existingUser.role !== userType;
+      const needsEmailUpdate = nextEmail && existingUser.email !== nextEmail;
+
+      if (needsRoleUpdate || needsEmailUpdate) {
         const { data: updatedUser, error: updateError } = await supabase
           .from('users')
-          .update({ role: userType })
+          .update({
+            ...(needsRoleUpdate ? { role: userType } : {}),
+            ...(needsEmailUpdate ? { email: nextEmail } : {})
+          })
           .eq('clerk_id', clerkId)
           .select()
           .single();
 
         if (updateError) {
-          console.error('Error updating user role:', updateError);
-          return NextResponse.json({ error: 'Failed to update user role' }, { status: 500 });
+          console.error('Error updating user:', updateError);
+          return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });
         }
 
         userData = updatedUser;

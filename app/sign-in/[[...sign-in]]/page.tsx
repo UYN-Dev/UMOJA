@@ -11,10 +11,15 @@ const SignInPage = () => {
   useEffect(() => {
     if (isLoaded && user) {
       const userType = user.unsafeMetadata?.userType;
+      
       if (userType === 'child') {
         router.replace('/child-dashboard');
       } else if (userType === 'guardian') {
         router.replace('/guardian-dashboard');
+      } else {
+        // User doesn't have a role set - redirect to role selection or home
+        // You can create a role selection page, or redirect to sign-up
+        router.replace('/sign-up');
       }
     }
   }, [isLoaded, user, router]);

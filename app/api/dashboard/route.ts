@@ -37,16 +37,28 @@ export async function GET() {
         .eq('user_id', userData.id)
         .single();
 
-      if (guardianError && guardianError.code !== 'PGRST116') {
+      // If guardian profile doesn't exist, that's okay - return empty data
+      if (guardianError && guardianError.code === 'PGRST116') {
+        // No guardian profile yet - return empty data
+        return NextResponse.json({
+          guardian: null,
+          children: [],
+          userRole: 'guardian'
+        });
+      }
+
+      if (guardianError) {
         console.error('Error fetching guardian profile:', guardianError);
+        return NextResponse.json({ 
+          error: 'Failed to load guardian profile' 
+        }, { status: 500 });
       }
 
       // Get children associated with this guardian
       let childrenData: any[] = [];
-      let childrenError: any = null;
       
       if (guardianProfile?.id) {
-        const result = await supabase
+        const { data: children, error: childrenError } = await supabase
           .from('child_guardian_relationships')
           .select(`
             id,
@@ -69,17 +81,17 @@ export async function GET() {
           `)
           .eq('guardian_profile_id', guardianProfile.id);
         
-        childrenData = result.data || [];
-        childrenError = result.error;
-      }
-
-      if (childrenError) {
-        console.error('Error fetching children:', childrenError);
+        if (childrenError) {
+          console.error('Error fetching children:', childrenError);
+          // Don't fail the whole request if children fetch fails
+        } else {
+          childrenData = children || [];
+        }
       }
 
       return NextResponse.json({
         guardian: guardianProfile,
-        children: childrenData || [],
+        children: childrenData,
         userRole: 'guardian'
       });
     } else if (userData.role === 'child') {
